@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spacegame.minhaLojaDeGames.models.Categoria;
+import com.spacegame.minhaLojaDeGames.models.Produto;
 import com.spacegame.minhaLojaDeGames.repositories.CategoriaRepository;
 import com.spacegame.minhaLojaDeGames.repositories.ProdutoRepository.ProdutosRepository;
 import com.spacegame.minhaLojaDeGames.services.CategoriaServices;
@@ -35,20 +36,20 @@ public class CategoriaController {
 	
 	@GetMapping
 	public ResponseEntity<List<Categoria>> pegarTodas(){
-		return ResponseEntity.status(202).body(repository.findAll());
+		return ResponseEntity.status(202).body(repositoryC.findAll());
 	}
 	
 
 	@GetMapping("/id/{id_categoria}") 
 	public ResponseEntity<Categoria> buscarCategoriaPorId(@PathVariable(value = "id_categoria") Long idCategoria) { 
-		return repository.findById(idCategoria)
+		return repositoryC.findById(idCategoria)
 				.map(idExistente -> ResponseEntity.status(200).body(idExistente))
 				.orElse(ResponseEntity.status(204).build()); 
 	}	
 	
 	@GetMapping("/descricao") 
 	public ResponseEntity<Categoria> buscarCategoriaPorDescricao(@PathVariable(value = "descricaoCategoria") String descricaoCategoria) { 
-		return repository.findByDescricaoCategoria(descricaoCategoria)
+		return repositoryC.findByDescricaoCategoria(descricaoCategoria)
 				.map(descricaoExistente -> ResponseEntity.status(200).body(descricaoExistente))
 				.orElse(ResponseEntity.status(204).build()); 
 	}	
@@ -72,12 +73,12 @@ public class CategoriaController {
 	
 	@DeleteMapping
 	public void deleteCategoria(@RequestParam long id) { 
-		repository.deleteById(id);
+		repositoryC.deleteById(id);
 	}
 	
 	@GetMapping("/produtos")
-	public ResponseEntity<List<Produtos>> pegarTodos(){
-		List<Produtos> listaDeProdutos = repositoryP.findAll();
+	public ResponseEntity<List<Produto>> pegarTodos(){
+		List<Produto> listaDeProdutos = repositoryP.findAll();
 		
 		if(listaDeProdutos.isEmpty()) {
 			return ResponseEntity.status(204).build();
@@ -87,8 +88,8 @@ public class CategoriaController {
 	}
 	
 	@GetMapping("/produtos/id/{id_produto}")
-	public ResponseEntity<Optional<Produtos>> buscarProdutoPorId(@PathVariable(value = "id_produto") Long idProduto) {
-		Optional<Produtos> idDoProduto = repositoryP.findById(idProduto);
+	public ResponseEntity<Optional<Produto>> buscarProdutoPorId(@PathVariable(value = "id_produto") Long idProduto) {
+		Optional<Produto> idDoProduto = repositoryP.findById(idProduto);
 		
 		if(idDoProduto.isEmpty()) {
 			return ResponseEntity.status(204).build();
@@ -99,7 +100,7 @@ public class CategoriaController {
 	
 	@GetMapping("/produtos/buscar")
 	public ResponseEntity<Object> buscarProdutoPorNome(@RequestParam(defaultValue = "") String nomeProduto) {
-		List<Produtos> listaDeProdutos = repositoryP.findAllByNomeProdutoContaining(nomeProduto);
+		List<Produto> listaDeProdutos = repositoryP.findAllByNomeProdutoContaining(nomeProduto);
 		
 		if(listaDeProdutos.isEmpty()) {
 			return ResponseEntity.status(204).build();

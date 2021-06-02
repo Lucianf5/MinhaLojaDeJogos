@@ -7,13 +7,18 @@ import org.springframework.stereotype.Service;
 
 
 import com.spacegame.minhaLojaDeGames.models.Categoria;
+import com.spacegame.minhaLojaDeGames.models.Produto;
 import com.spacegame.minhaLojaDeGames.repositories.CategoriaRepository;
+import com.spacegame.minhaLojaDeGames.repositories.ProdutoRepository.ProdutosRepository;
 
 
 @Service
 public class CategoriaServices {
 	
-	private @Autowired CategoriaRepository repository;
+	private @Autowired CategoriaRepository repositoryC;
+	
+	
+	private @Autowired ProdutosRepository repositoryP;
 	
 	/**
 	 * Método utilizado para cadastrar um novo usuário no sistema, validando sua existência.
@@ -24,12 +29,12 @@ public class CategoriaServices {
 	 */
 	
 	public Optional<Object> cadastrarCategoria(Categoria novaCategoria){
-		Optional<Object> categoriaExistente = Optional.ofNullable(repository.findByNome(novaCategoria.getNomeCategoria())); 
+		Optional<Object> categoriaExistente = Optional.ofNullable(repositoryC.findByNome(novaCategoria.getNomeCategoria())); 
 		
 		if(categoriaExistente.isPresent()) { 
 			return Optional.empty(); 
 		}else {
-			return Optional.ofNullable(repository.save(novaCategoria)); 
+			return Optional.ofNullable(repositoryC.save(novaCategoria)); 
 		}
 	}
 		
@@ -43,15 +48,60 @@ public class CategoriaServices {
 		 */
 		
 		public Optional<Categoria> atualizarCategoria(Long idCategoria, Categoria atualizacaoCategoria){ 
-			Optional<Categoria> categoriaExistente = repository.findById(idCategoria); 
+			Optional<Categoria> categoriaExistente = repositoryC.findById(idCategoria); 
 			if(categoriaExistente.isPresent()) { 
 				categoriaExistente.get().setNomeCategoria(atualizacaoCategoria.getNomeCategoria()); 
 				categoriaExistente.get().setDescricaoCategoria(atualizacaoCategoria.getDescricaoCategoria()); 
-				return Optional.ofNullable(repository.save(categoriaExistente.get())); 
+				return Optional.ofNullable(repositoryC.save(categoriaExistente.get())); 
 				
 			} else {
 				return Optional.empty();
 			}
+		}
+			
+			/**
+			 * Método utilizado para cadastrar um novo produto e validar a existencia dele e da categoria.
+			 * @param idCategoria
+			 * @param novoProduto
+			 * @author Luciano
+			 * @since 1.0
+			 * @return Optional com a entidade produto dentro ou vazio  
+			 */
+			
+			public Optional<Object> cadastrarProduto(Long idCategoria, Produto novoProduto){
+				Optional<Categoria> categoriaExistente = repositoryC.findById(idCategoria);
+				Optional<Object> produtoExistente = repositoryP.findByNomeProduto(novoProduto.getNomeProduto());
+				if(categoriaExistente.isPresent() && !produtoExistente.isPresent()) {
+					novoProduto.setGerador(categoriaExistente.get());
+					return Optional.ofNullable(repositoryP.save(novoProduto));
+				} else {
+					return Optional.empty();
+				}
+			}
+			
+			
+			/**
+			 * Método utilizado para atualizar os campos de nome do produto e da desenvolvedora do produto.
+			 * @param idCategoria
+			 * @param idProduto
+			 * @param atualizacaoProduto
+			 * @author Luciano
+			 * @since 1.0 
+			 * @return Retorna um Optional com entidade Produto atualizado ou um Optional vazio.
+			 */
+			public Optional<Object> atualizarProduto(Long idCategoria, Long idProduto, Produto atualizacaoProduto){
+				Optional<Categoria> categoriaExistente = repositoryC.findById(idCategoria);
+				Optional<Produto> produtoExistente = repositoryP.findById(idProduto);
+				Optional<Object> nomeProdutoExistente = repositoryP.findByNomeProduto(atualizacaoProduto.getNomeProduto());
+				
+				
+				if(categoriaExistente.isPresent() && produtoExistente.isPresent() && nomeProdutoExistente.isEmpty()) {
+					produtoExistente.get().setNomeProduto(atualizacaoProduto.getNomeProduto());
+					produtoExistente.get().setNomeDesenvolvedora(atualizacaoProduto.getNomeDesenvolvedora());
+					return Optional.ofNullable(repositoryP.save(produtoExistente.get()));
+				} else {
+					return Optional.empty();
+				}
 	}
 
 }
