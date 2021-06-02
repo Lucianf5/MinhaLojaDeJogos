@@ -1,6 +1,5 @@
 package com.spacegame.minhaLojaDeGames.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -11,67 +10,50 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "tb_categorias")
+@Table(name = "tb_categoria")
 public class Categoria {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) 
-	private Long idCategoria;
-	
-	@NotNull
-	@Size(min = 3, max = 100, message = "Entre 3 e 100 caracteres")
-	@Column(name = "nomeCategoria")
-	private String nomeCategoria;
-	
-	@NotNull
-	@Size(min = 10, max = 500, message = "Entre 10 e 500 caracteres")
-	@Column(name = "descricaoCategoria")
-	private String descricaoCategoria;
-	
-	@OneToMany(mappedBy = "gerador", cascade = CascadeType.ALL)
-	@JsonIgnoreProperties({"gerador"})
-	private List<Produto> produtosDaCategoria = new ArrayList<>();
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-	public Long getIdCategoria() {
-		return idCategoria;
+	@Column(unique = true, nullable = false)
+	private String nome;
+
+	@Size(min = 10, max = 255)
+	private String descricao;
+
+	@OneToMany(mappedBy = "categoria", targetEntity = Produto.class, cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("categoria")
+	private List<Produto> jogos;
+
+	public Long getId() {
+		return id;
 	}
 
-	public void setIdCategoria(Long idCategoria) {
-		this.idCategoria = idCategoria;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public List<Produto> getProdutosDaCategoria() {
-		return produtosDaCategoria;
+	public String getNome() {
+		return nome;
 	}
 
-	public void setProdutosDaCategoria(List<Produto> produtosDaCategoria) {
-		this.produtosDaCategoria = produtosDaCategoria;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
-	public String getNomeCategoria() {
-		return nomeCategoria;
+	public String getDescricao() {
+		return descricao;
 	}
 
-	public void setNomeCategoria(String nomeCategoria) {
-		this.nomeCategoria = nomeCategoria;
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
-	public String getDescricaoCategoria() {
-		return descricaoCategoria;
-	}
-
-	public void setDescricaoCategoria(String descricaoCategoria) {
-		this.descricaoCategoria = descricaoCategoria;
-	}
-
-	
-
-	
-	
 }
