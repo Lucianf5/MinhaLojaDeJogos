@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.spacegame.minhaLojaDeGames.models.Produto;
 import com.spacegame.minhaLojaDeGames.repositories.ProdutoRepository;
 
+@Service
 public class ProdutoServices {
 	
 	@Autowired
